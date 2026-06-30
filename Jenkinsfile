@@ -16,12 +16,13 @@ pipeline {
             steps {
                 sh 'docker rm -f test-container || true'
                 sh 'docker run -d --name test-container -p 8082:80 app-devops'
-                sh 'sleep 5'
-                sh 'curl -f http://localhost:8082/ || exit 1'
+                sh 'sleep 8'
+                sh 'docker exec test-container curl -f http://localhost:80/ || exit 1'
                 sh 'docker stop test-container'
                 sh 'docker rm test-container'
             }
         }
+
         stage('Deploy') {
             steps {
                 sh 'docker stop app-devops-prod || true'
