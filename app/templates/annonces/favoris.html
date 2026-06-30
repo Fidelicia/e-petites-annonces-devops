@@ -1,0 +1,16 @@
+{% extends 'annonces/base.html' %}
+{% block titre %}Mes favoris{% endblock %}
+{% block contenu %}
+<h1>Mes favoris</h1>
+<div class="grille">
+    {% for fav in favoris %}
+    <a href="{% url 'detail_annonce' fav.annonce.pk %}" class="carte-annonce">
+        <div class="contenu">
+            <strong>{{ fav.annonce.titre }}</strong><br>
+            <span class="prix">{{ fav.annonce.prix }} Ar</span>
+        </div>
+    </a>
+    {% empty %}<p>Aucun favori.</p>
+    {% endfor %}
+</div>
+{% endblock %}

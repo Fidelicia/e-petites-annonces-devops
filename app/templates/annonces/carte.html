@@ -1,0 +1,6 @@
+{% extends 'annonces/base.html' %}
+{% block titre %}Carte des annonces{% endblock %}
+{% block contenu %}
+<h1>Carte des annonces géolocalisées</h1>
+<div class="folium-map">{{ carte_html|safe }}</div>
+{% endblock %}

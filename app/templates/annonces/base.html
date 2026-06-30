@@ -1,0 +1,60 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr" data-theme="clair">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block titre %}E-Petites-Annonces Madagascar{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <header>
+        <a href="{% url 'accueil' %}" class="logo">🏷️ E-Petites-Annonces Mada</a>
+        <nav>
+            <a href="{% url 'liste_annonces' %}">Annonces</a>
+            <a href="{% url 'carte_annonces' %}">Carte</a>
+            {% if user.is_authenticated %}
+                <a href="{% url 'publier_annonce' %}">Publier</a>
+                <a href="{% url 'mes_annonces' %}">Mes annonces</a>
+                <a href="{% url 'mes_favoris' %}">Favoris</a>
+                <a href="{% url 'messagerie' %}">Messages</a>
+                <form method="post" action="{% url 'deconnexion' %}" style="display:inline;margin:0;">
+                    {% csrf_token %}
+                    <button type="submit" style="background:none;border:none;color:inherit;font-weight:bold;cursor:pointer;padding:0.3rem 0.5rem;">Déconnexion ({{ user.username }})</button>
+                </form>
+            {% else %}
+                <a href="{% url 'connexion' %}">Connexion</a>
+                <a href="{% url 'inscription' %}">Inscription</a>
+            {% endif %}
+            <button id="bouton-theme" type="button" title="Changer de thème">🌓 Thème</button>
+        </nav>
+    </header>
+    <div class="container">
+        {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+                <li class="{% if message.tags %}{{ message.tags }}{% endif %}">{{ message }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+        {% block contenu %}{% endblock %}
+    </div>
+    <footer>E-Petites-Annonces Madagascar — Projet DevOps CI/CD &copy; 2026</footer>
+
+    <script>
+        (function () {
+            const racine = document.documentElement;
+            const bouton = document.getElementById('bouton-theme');
+            const themeEnregistre = localStorage.getItem('theme') || 'clair';
+            racine.setAttribute('data-theme', themeEnregistre);
+
+            bouton.addEventListener('click', function () {
+                const themeActuel = racine.getAttribute('data-theme');
+                const nouveauTheme = themeActuel === 'clair' ? 'sombre' : 'clair';
+                racine.setAttribute('data-theme', nouveauTheme);
+                localStorage.setItem('theme', nouveauTheme);
+            });
+        })();
+    </script>
+</body>
+</html>

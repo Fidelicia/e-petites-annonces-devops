@@ -1,0 +1,60 @@
+{% extends 'annonces/base.html' %}
+{% block titre %}{{ annonce.titre }}{% endblock %}
+{% block contenu %}
+<a href="{% url 'liste_annonces' %}">← Retour aux annonces</a>
+<h1>{{ annonce.titre }}</h1>
+<p class="prix" style="font-size:1.5rem;">{{ annonce.prix }} Ar</p>
+<p>📍 {{ annonce.ville }} — <span class="badge">{{ annonce.get_etat_display }}</span> — 👁 {{ annonce.nb_vues }} vues</p>
+
+<div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+    {% for photo in annonce.photos.all %}
+        <img src="{{ photo.image.url }}" style="width:200px;height:150px;object-fit:cover;border-radius:8px;">
+    {% endfor %}
+</div>
+
+<h3>Description</h3>
+<p>{{ annonce.description }}</p>
+<p><strong>Publié par :</strong> {{ annonce.auteur.username }} le {{ annonce.date_creation|date:"d/m/Y" }}</p>
+
+{% if carte_html %}
+<h3>📍 Lieu de publication</h3>
+<div class="folium-map">{{ carte_html|safe }}</div>
+{% endif %}
+
+{% if user.is_authenticated %}
+<form method="post" action="{% url 'toggle_favori' annonce.pk %}" style="display:inline;">
+    {% csrf_token %}
+    <button class="bouton bouton-secondaire" type="submit">{% if est_favori %}★ Retirer des favoris{% else %}☆ Ajouter aux favoris{% endif %}</button>
+</form>
+
+{% if user != annonce.auteur %}
+<div class="bloc">
+    <h3>Contacter le vendeur</h3>
+    <form method="post" action="{% url 'envoyer_message' annonce.pk %}">
+        {% csrf_token %}
+        <textarea name="contenu" rows="3" placeholder="Votre message..." required></textarea>
+        <button class="bouton" type="submit">Envoyer</button>
+    </form>
+</div>
+
+<div class="bloc">
+    <h3>Signaler cette annonce</h3>
+    <form method="post" action="{% url 'signaler_annonce' annonce.pk %}">
+        {% csrf_token %}
+        <label>Motif</label>
+        <select name="motif">
+            <option value="spam">Spam ou publicité</option>
+            <option value="frauduleux">Annonce frauduleuse</option>
+            <option value="inapproprie">Contenu/image inapproprié(e) ou non compatible</option>
+            <option value="autre">Autre</option>
+        </select>
+        <label>Commentaire (optionnel)</label>
+        <textarea name="commentaire" rows="2"></textarea>
+        <button class="bouton bouton-danger" type="submit">Signaler</button>
+    </form>
+</div>
+{% endif %}
+{% else %}
+<p><a href="{% url 'connexion' %}">Connectez-vous</a> pour contacter le vendeur ou ajouter aux favoris.</p>
+{% endif %}
+{% endblock %}

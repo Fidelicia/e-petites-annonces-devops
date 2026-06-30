@@ -1,0 +1,17 @@
+{% extends 'annonces/base.html' %}
+{% block titre %}Mes annonces{% endblock %}
+{% block contenu %}
+<h1>Mes annonces</h1>
+<div class="grille">
+    {% for annonce in annonces %}
+    <a href="{% url 'detail_annonce' annonce.pk %}" class="carte-annonce">
+        <div class="contenu">
+            <strong>{{ annonce.titre }}</strong><br>
+            <span class="prix">{{ annonce.prix }} Ar</span><br>
+            <small>Statut : {{ annonce.get_statut_display }} — {{ annonce.nb_vues }} vues</small>
+        </div>
+    </a>
+    {% empty %}<p>Vous n'avez publié aucune annonce. <a href="{% url 'publier_annonce' %}">Publier maintenant</a></p>
+    {% endfor %}
+</div>
+{% endblock %}

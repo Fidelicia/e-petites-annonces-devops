@@ -1,0 +1,27 @@
+{% extends 'annonces/base.html' %}
+{% block titre %}Toutes les annonces{% endblock %}
+{% block contenu %}
+<h1>Rechercher une annonce</h1>
+<form method="get" class="bloc">
+    {{ filter.form.as_p }}
+    <button class="bouton" type="submit">Filtrer</button>
+</form>
+<div class="grille">
+    {% for annonce in filter.qs %}
+    <a href="{% url 'detail_annonce' annonce.pk %}" class="carte-annonce">
+        {% if annonce.photos.first %}
+            <img src="{{ annonce.photos.first.image.url }}" alt="">
+        {% else %}
+            <img src="https://via.placeholder.com/220x150?text=Pas+de+photo" alt="">
+        {% endif %}
+        <div class="contenu">
+            <strong>{{ annonce.titre }}</strong><br>
+            <span class="prix">{{ annonce.prix }} Ar</span><br>
+            <small>📍 {{ annonce.ville }}</small>
+        </div>
+    </a>
+    {% empty %}
+    <p>Aucun résultat.</p>
+    {% endfor %}
+</div>
+{% endblock %}

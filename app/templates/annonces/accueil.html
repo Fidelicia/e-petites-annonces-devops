@@ -1,0 +1,29 @@
+{% extends 'annonces/base.html' %}
+{% block titre %}Accueil — E-Petites-Annonces{% endblock %}
+{% block contenu %}
+<h1>Petites annonces à Madagascar</h1>
+<div class="categories">
+    {% for cat in categories %}
+        <a href="{% url 'liste_annonces' %}?categorie={{ cat.id }}">{{ cat.nom }}</a>
+    {% endfor %}
+</div>
+<h2>Annonces récentes</h2>
+<div class="grille">
+    {% for annonce in annonces %}
+    <a href="{% url 'detail_annonce' annonce.pk %}" class="carte-annonce">
+        {% if annonce.photos.first %}
+            <img src="{{ annonce.photos.first.image.url }}" alt="{{ annonce.titre }}">
+        {% else %}
+            <img src="https://via.placeholder.com/220x150?text=Pas+de+photo" alt="">
+        {% endif %}
+        <div class="contenu">
+            <strong>{{ annonce.titre }}</strong><br>
+            <span class="prix">{{ annonce.prix }} Ar</span><br>
+            <small>📍 {{ annonce.ville }}</small>
+        </div>
+    </a>
+    {% empty %}
+    <p>Aucune annonce pour le moment. <a href="{% url 'publier_annonce' %}">Publiez la première !</a></p>
+    {% endfor %}
+</div>
+{% endblock %}
