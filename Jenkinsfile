@@ -17,7 +17,11 @@ pipeline {
                 sh 'docker rm -f test-container || true'
                 sh 'docker run -d --name test-container -p 8082:80 app-devops'
                 sh 'sleep 8'
-                sh 'docker exec test-container curl -f http://localhost:80/ || exit 1'
+                sh '''
+                    TEST_IP=$(docker inspect -f "{{.NetworkSettings.IPAddress}}" test-container)
+                    echo "IP du conteneur de test : $TEST_IP"
+                    curl -f http://$TEST_IP:80/ || exit 1
+                '''
                 sh 'docker stop test-container'
                 sh 'docker rm test-container'
             }
